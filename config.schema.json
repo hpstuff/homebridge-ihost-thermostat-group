@@ -1,0 +1,70 @@
+{
+  "pluginAlias": "ThermostatGroupHomebridgePlugin",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "host": {
+        "title": "iHost IP",
+        "type": "string",
+        "required": true,
+        "default": "ihost.local"
+      },
+      "token": {
+        "title": "token",
+        "type": "string",
+        "required": true,
+        "default": "-"
+      },
+      "thermostats": {
+        "type": "array",
+        "items": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "required": true,
+            "default": "Thermostat"
+          },
+          "sensor": {
+            "title": "Sensor",
+            "type": "string",
+            "required": true,
+            "default": "sensor_id"
+          },
+          "switch": {
+            "title": "Switch",
+            "type": "string",
+            "required": true,
+            "default": "switch_id"
+          }
+        }
+      }
+    }
+  },
+  "layout": [
+    {
+      "title": "iHost IP",
+      "orderable": false,
+      "expandable": true,
+      "expanded": false,
+      "type": "section",
+      "items": [
+        "host",
+        "token"
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Thermostats",
+      "expandable": true,
+      "expanded": true,
+      "orderable": false,
+      "items": [
+        "thermostats[].name",
+        "thermostats[].sensor",
+        "thermostats[].switch"
+      ]
+    }
+  ]
+}
