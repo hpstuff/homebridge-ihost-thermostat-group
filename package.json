@@ -1,6 +1,5 @@
 {
-  "private": true,
-  "displayName": "Plugin Name",
+  "displayName": "iHost Custom Thermostat",
   "name": "homebridge-ihost-thermostat-group",
   "version": "1.0.0",
   "description": "A short description about what your plugin does.",
@@ -24,10 +23,7 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "homebridge-ihost-thermostat-group",
-    "homebridge-ihost",
-    "thermostat",
-    "thermostat-group"
+    "homebridge-plugin"
   ],
   "dependencies": {
     "axios": "^1.6.7"

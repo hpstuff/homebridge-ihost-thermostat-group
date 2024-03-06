@@ -60,15 +60,16 @@ class ThermostatGroupHomebridgePlatform {
                 // the accessory already exists
                 this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                 // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-                // existingAccessory.context.device = device;
-                // this.api.updatePlatformAccessories([existingAccessory]);
+                existingAccessory.context.device = device;
+                existingAccessory.context.token = this.config.token;
+                this.api.updatePlatformAccessories([existingAccessory]);
                 // create the accessory handler for the restored accessory
                 // this is imported from `platformAccessory.ts`
                 new platformAccessory_1.ExamplePlatformAccessory(this, existingAccessory);
                 // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
                 // remove platform accessories when no longer present
-                // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
-                // this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
+                this.api.unregisterPlatformAccessories(settings_1.PLUGIN_NAME, settings_1.PLATFORM_NAME, [existingAccessory]);
+                this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
             }
             else {
                 // the accessory does not yet exist, so we need to create it

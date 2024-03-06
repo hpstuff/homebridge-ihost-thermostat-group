@@ -9,13 +9,13 @@
         "title": "iHost IP",
         "type": "string",
         "required": true,
-        "default": "ihost.local"
+        "default": "http://ihost.local"
       },
       "token": {
         "title": "token",
         "type": "string",
         "required": true,
-        "default": "-"
+        "default": ""
       },
       "thermostats": {
         "type": "array",
@@ -46,8 +46,8 @@
     {
       "title": "iHost IP",
       "orderable": false,
-      "expandable": true,
-      "expanded": false,
+      "expandable": false,
+      "expanded": true,
       "type": "section",
       "items": [
         "host",
@@ -55,9 +55,9 @@
       ]
     },
     {
-      "type": "section",
+      "type": "array",
       "title": "Thermostats",
-      "expandable": true,
+      "expandable": false,
       "expanded": true,
       "orderable": false,
       "items": [
