@@ -25,7 +25,7 @@ export class ExamplePlatformAccessory {
   private minTemp = 15;
   private minStep = 0.5;
 
-  private pollInterval = 10;
+  private pollInterval = 60;
 
   constructor(
     private readonly platform: ThermostatGroupHomebridgePlatform,
