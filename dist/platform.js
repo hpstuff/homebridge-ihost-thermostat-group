@@ -1,24 +1,26 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ThermostatGroupHomebridgePlatform = void 0;
-const settings_1 = require("./settings");
-const platformAccessory_1 = require("./platformAccessory");
+import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
+import { ExamplePlatformAccessory } from "./platformAccessory";
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
-class ThermostatGroupHomebridgePlatform {
+export class ThermostatGroupHomebridgePlatform {
+    log;
+    config;
+    api;
+    Service;
+    Characteristic;
+    // this is used to track restored cached accessories
+    accessories = new Map();
+    discoveredCacheUUIDs = [];
     constructor(log, config, api) {
         this.log = log;
         this.config = config;
         this.api = api;
-        this.Service = this.api.hap.Service;
-        this.Characteristic = this.api.hap.Characteristic;
-        // this is used to track restored cached accessories
-        this.accessories = new Map();
-        this.discoveredCacheUUIDs = [];
         this.log.debug("Finished initializing platform:", this.config.name);
+        this.Service = api.hap.Service;
+        this.Characteristic = api.hap.Characteristic;
         // When this event is fired it means Homebridge has restored all cached accessories from disk.
         // Dynamic Platform plugins should only register new accessories after this event was fired,
         // in order to ensure they weren't added to homebridge already. This event can also be used
@@ -66,7 +68,7 @@ class ThermostatGroupHomebridgePlatform {
                 this.api.updatePlatformAccessories([existingAccessory]);
                 // create the accessory handler for the restored accessory
                 // this is imported from `platformAccessory.ts`
-                new platformAccessory_1.ExamplePlatformAccessory(this, existingAccessory);
+                new ExamplePlatformAccessory(this, existingAccessory);
                 // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
                 // remove platform accessories when no longer present
                 // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
@@ -83,14 +85,13 @@ class ThermostatGroupHomebridgePlatform {
                 accessory.context.token = this.config.token;
                 // create the accessory handler for the newly create accessory
                 // this is imported from `platformAccessory.ts`
-                new platformAccessory_1.ExamplePlatformAccessory(this, accessory);
+                new ExamplePlatformAccessory(this, accessory);
                 // link the accessory to your platform
-                this.api.registerPlatformAccessories(settings_1.PLUGIN_NAME, settings_1.PLATFORM_NAME, [
+                this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [
                     accessory,
                 ]);
             }
         }
     }
 }
-exports.ThermostatGroupHomebridgePlatform = ThermostatGroupHomebridgePlatform;
 //# sourceMappingURL=platform.js.map

@@ -16,11 +16,6 @@ export class ExamplePlatformAccessory {
     targetTemperature: 15,
   };
 
-  private validStates = [
-    this.platform.Characteristic.TargetHeatingCoolingState.OFF,
-    this.platform.Characteristic.TargetHeatingCoolingState.HEAT,
-  ];
-
   private maxTemp = 30;
   private minTemp = 15;
   private minStep = 0.5;
@@ -70,7 +65,10 @@ export class ExamplePlatformAccessory {
     this.service
       .getCharacteristic(Characteristic.TargetHeatingCoolingState)
       .setProps({
-        validValues: this.validStates,
+        validValues: [
+          this.platform.Characteristic.TargetHeatingCoolingState.OFF,
+          this.platform.Characteristic.TargetHeatingCoolingState.HEAT,
+        ],
       });
 
     this.service

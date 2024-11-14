@@ -9,7 +9,6 @@ export declare class ExamplePlatformAccessory {
     private token;
     private host;
     private state;
-    private validStates;
     private maxTemp;
     private minTemp;
     private minStep;
@@ -19,4 +18,3 @@ export declare class ExamplePlatformAccessory {
     setTargetTemperature(value: CharacteristicValue): Promise<void>;
     setTargetHeatingCoolingState(value: CharacteristicValue): Promise<void>;
 }
-//# sourceMappingURL=platformAccessory.d.ts.map

@@ -1,27 +1,23 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExamplePlatformAccessory = void 0;
-const axios_1 = __importDefault(require("axios"));
-class ExamplePlatformAccessory {
+import axios from "axios";
+export class ExamplePlatformAccessory {
+    platform;
+    accessory;
+    service;
+    temperatureDevice;
+    temperatureSwitch;
+    token;
+    host = "http://ihost.local";
+    state = {
+        mode: 0,
+        targetTemperature: 15,
+    };
+    maxTemp = 30;
+    minTemp = 15;
+    minStep = 0.5;
+    pollInterval = 60;
     constructor(platform, accessory) {
         this.platform = platform;
         this.accessory = accessory;
-        this.host = "http://ihost.local";
-        this.state = {
-            mode: 0,
-            targetTemperature: 15,
-        };
-        this.validStates = [
-            this.platform.Characteristic.TargetHeatingCoolingState.OFF,
-            this.platform.Characteristic.TargetHeatingCoolingState.HEAT,
-        ];
-        this.maxTemp = 30;
-        this.minTemp = 15;
-        this.minStep = 0.5;
-        this.pollInterval = 60;
         const { Characteristic, Service } = this.platform;
         this.temperatureDevice = this.accessory.context.device.sensor;
         this.temperatureSwitch = this.accessory.context.device.switch;
@@ -48,7 +44,10 @@ class ExamplePlatformAccessory {
         this.service
             .getCharacteristic(Characteristic.TargetHeatingCoolingState)
             .setProps({
-            validValues: this.validStates,
+            validValues: [
+                this.platform.Characteristic.TargetHeatingCoolingState.OFF,
+                this.platform.Characteristic.TargetHeatingCoolingState.HEAT,
+            ],
         });
         this.service
             .getCharacteristic(Characteristic.TargetTemperature)
@@ -72,7 +71,7 @@ class ExamplePlatformAccessory {
     async _getStatus() {
         const { Characteristic } = this.platform;
         try {
-            const res = await axios_1.default
+            const res = await axios
                 .get(`${this.host}/open-api/v1/rest/devices/${this.temperatureDevice}`, {
                 headers: {
                     Authorization: `Bearer ${this.token}`,
@@ -90,7 +89,7 @@ class ExamplePlatformAccessory {
                     this.service
                         .getCharacteristic(Characteristic.CurrentHeatingCoolingState)
                         .updateValue(Characteristic.CurrentHeatingCoolingState.HEAT);
-                    await axios_1.default.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
+                    await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
                         state: {
                             power: {
                                 powerState: "on",
@@ -102,7 +101,7 @@ class ExamplePlatformAccessory {
                     this.service
                         .getCharacteristic(Characteristic.CurrentHeatingCoolingState)
                         .updateValue(Characteristic.CurrentHeatingCoolingState.OFF);
-                    await axios_1.default.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
+                    await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
                         state: {
                             power: {
                                 powerState: "off",
@@ -112,7 +111,7 @@ class ExamplePlatformAccessory {
                 }
             }
             else {
-                await axios_1.default.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
+                await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
                     state: {
                         power: {
                             powerState: "off",
@@ -136,5 +135,4 @@ class ExamplePlatformAccessory {
         this.platform.log.debug("Set Characteristic TargetHeatingCoolingState ->", value);
     }
 }
-exports.ExamplePlatformAccessory = ExamplePlatformAccessory;
 //# sourceMappingURL=platformAccessory.js.map

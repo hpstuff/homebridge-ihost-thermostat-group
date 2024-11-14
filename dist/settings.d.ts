@@ -6,4 +6,3 @@ export declare const PLATFORM_NAME = "ThermostatGroupHomebridgePlugin";
  * This must match the name of your plugin as defined the package.json
  */
 export declare const PLUGIN_NAME = "homebridge-ihost-thermostat-group";
-//# sourceMappingURL=settings.d.ts.map

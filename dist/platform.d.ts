@@ -25,4 +25,3 @@ export declare class ThermostatGroupHomebridgePlatform implements DynamicPlatfor
      */
     discoverDevices(): void;
 }
-//# sourceMappingURL=platform.d.ts.map
