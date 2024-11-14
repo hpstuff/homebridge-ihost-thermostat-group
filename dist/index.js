@@ -1,9 +1,11 @@
-import { PLATFORM_NAME } from "./settings";
-import { ThermostatGroupHomebridgePlatform } from "./platform";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const settings_1 = require("./settings");
+const platform_1 = require("./platform");
 /**
  * This method registers the platform with Homebridge
  */
-export default (api) => {
-    api.registerPlatform(PLATFORM_NAME, ThermostatGroupHomebridgePlatform);
+exports.default = (api) => {
+    api.registerPlatform(settings_1.PLATFORM_NAME, platform_1.ThermostatGroupHomebridgePlatform);
 };
 //# sourceMappingURL=index.js.map

@@ -2,7 +2,6 @@
   "displayName": "iHost Custom Thermostat",
   "name": "homebridge-ihost-thermostat-group",
   "version": "1.1.0",
-  "type": "module",
   "description": "A short description about what your plugin does.",
   "author": "Rumen Rusanov",
   "license": "Apache-2.0",

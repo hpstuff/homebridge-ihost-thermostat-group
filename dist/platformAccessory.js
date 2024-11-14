@@ -1,5 +1,11 @@
-import axios from "axios";
-export class ExamplePlatformAccessory {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ExamplePlatformAccessory = void 0;
+const axios_1 = __importDefault(require("axios"));
+class ExamplePlatformAccessory {
     platform;
     accessory;
     service;
@@ -71,7 +77,7 @@ export class ExamplePlatformAccessory {
     async _getStatus() {
         const { Characteristic } = this.platform;
         try {
-            const res = await axios
+            const res = await axios_1.default
                 .get(`${this.host}/open-api/v1/rest/devices/${this.temperatureDevice}`, {
                 headers: {
                     Authorization: `Bearer ${this.token}`,
@@ -89,7 +95,7 @@ export class ExamplePlatformAccessory {
                     this.service
                         .getCharacteristic(Characteristic.CurrentHeatingCoolingState)
                         .updateValue(Characteristic.CurrentHeatingCoolingState.HEAT);
-                    await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
+                    await axios_1.default.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
                         state: {
                             power: {
                                 powerState: "on",
@@ -101,7 +107,7 @@ export class ExamplePlatformAccessory {
                     this.service
                         .getCharacteristic(Characteristic.CurrentHeatingCoolingState)
                         .updateValue(Characteristic.CurrentHeatingCoolingState.OFF);
-                    await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
+                    await axios_1.default.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
                         state: {
                             power: {
                                 powerState: "off",
@@ -111,7 +117,7 @@ export class ExamplePlatformAccessory {
                 }
             }
             else {
-                await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
+                await axios_1.default.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
                     state: {
                         power: {
                             powerState: "off",
@@ -135,4 +141,5 @@ export class ExamplePlatformAccessory {
         this.platform.log.debug("Set Characteristic TargetHeatingCoolingState ->", value);
     }
 }
+exports.ExamplePlatformAccessory = ExamplePlatformAccessory;
 //# sourceMappingURL=platformAccessory.js.map

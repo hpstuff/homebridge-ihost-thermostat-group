@@ -1,11 +1,14 @@
-import { PLATFORM_NAME, PLUGIN_NAME } from "./settings";
-import { ExamplePlatformAccessory } from "./platformAccessory";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ThermostatGroupHomebridgePlatform = void 0;
+const settings_1 = require("./settings");
+const platformAccessory_1 = require("./platformAccessory");
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
-export class ThermostatGroupHomebridgePlatform {
+class ThermostatGroupHomebridgePlatform {
     log;
     config;
     api;
@@ -68,7 +71,7 @@ export class ThermostatGroupHomebridgePlatform {
                 this.api.updatePlatformAccessories([existingAccessory]);
                 // create the accessory handler for the restored accessory
                 // this is imported from `platformAccessory.ts`
-                new ExamplePlatformAccessory(this, existingAccessory);
+                new platformAccessory_1.ExamplePlatformAccessory(this, existingAccessory);
                 // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
                 // remove platform accessories when no longer present
                 // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
@@ -85,13 +88,14 @@ export class ThermostatGroupHomebridgePlatform {
                 accessory.context.token = this.config.token;
                 // create the accessory handler for the newly create accessory
                 // this is imported from `platformAccessory.ts`
-                new ExamplePlatformAccessory(this, accessory);
+                new platformAccessory_1.ExamplePlatformAccessory(this, accessory);
                 // link the accessory to your platform
-                this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [
+                this.api.registerPlatformAccessories(settings_1.PLUGIN_NAME, settings_1.PLATFORM_NAME, [
                     accessory,
                 ]);
             }
         }
     }
 }
+exports.ThermostatGroupHomebridgePlatform = ThermostatGroupHomebridgePlatform;
 //# sourceMappingURL=platform.js.map
