@@ -1,5 +1,5 @@
-import { PlatformAccessory, CharacteristicValue } from 'homebridge';
-import { ThermostatGroupHomebridgePlatform } from './platform';
+import { PlatformAccessory, CharacteristicValue } from "homebridge";
+import { ThermostatGroupHomebridgePlatform } from "./platform";
 export declare class ExamplePlatformAccessory {
     private readonly platform;
     private readonly accessory;

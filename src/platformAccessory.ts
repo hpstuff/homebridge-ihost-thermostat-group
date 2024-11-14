@@ -1,7 +1,7 @@
-import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicValue } from "homebridge";
 
-import { ThermostatGroupHomebridgePlatform } from './platform';
-import axios from 'axios';
+import { ThermostatGroupHomebridgePlatform } from "./platform";
+import axios from "axios";
 
 export class ExamplePlatformAccessory {
   private service: Service;
@@ -9,7 +9,7 @@ export class ExamplePlatformAccessory {
   private temperatureDevice: string;
   private temperatureSwitch: string;
   private token: string;
-  private host: string = 'http://ihost.local';
+  private host: string = "http://ihost.local";
 
   private state = {
     mode: 0,
@@ -29,9 +29,8 @@ export class ExamplePlatformAccessory {
 
   constructor(
     private readonly platform: ThermostatGroupHomebridgePlatform,
-    private readonly accessory: PlatformAccessory,
+    private readonly accessory: PlatformAccessory
   ) {
-
     const { Characteristic, Service } = this.platform;
 
     this.temperatureDevice = this.accessory.context.device.sensor;
@@ -40,19 +39,29 @@ export class ExamplePlatformAccessory {
     if (this.accessory.context.host) this.host = this.accessory.context.host;
 
     // set accessory information
-    this.accessory.getService(Service.AccessoryInformation)!
-      .setCharacteristic(Characteristic.Manufacturer, 'iHost')
-      .setCharacteristic(Characteristic.Model, 'iHost Thermostat Group')
-      .setCharacteristic(Characteristic.SerialNumber, `${this.temperatureDevice}-${this.temperatureSwitch}`);
+    this.accessory
+      .getService(Service.AccessoryInformation)!
+      .setCharacteristic(Characteristic.Manufacturer, "iHost")
+      .setCharacteristic(Characteristic.Model, "iHost Thermostat Group")
+      .setCharacteristic(
+        Characteristic.SerialNumber,
+        `${this.temperatureDevice}-${this.temperatureSwitch}`
+      );
 
-    this.platform.log.debug('Context:', this.accessory.context);
+    this.platform.log.debug("Context:", this.accessory.context);
 
+    this.service =
+      this.accessory.getService(Service.Thermostat) ||
+      this.accessory.addService(Service.Thermostat);
 
-    this.service = this.accessory.getService(Service.Thermostat) || this.accessory.addService(Service.Thermostat);
+    this.service.setCharacteristic(
+      Characteristic.Name,
+      accessory.context.device.name
+    );
 
-    this.service.setCharacteristic(Characteristic.Name, accessory.context.device.name);
-
-    this.service.getCharacteristic(Characteristic.TemperatureDisplayUnits).updateValue(0);
+    this.service
+      .getCharacteristic(Characteristic.TemperatureDisplayUnits)
+      .updateValue(0);
 
     this.service
       .getCharacteristic(Characteristic.TargetHeatingCoolingState)
@@ -61,16 +70,16 @@ export class ExamplePlatformAccessory {
     this.service
       .getCharacteristic(Characteristic.TargetHeatingCoolingState)
       .setProps({
-        validValues: this.validStates
+        validValues: this.validStates,
       });
-      
+
     this.service
       .getCharacteristic(Characteristic.TargetTemperature)
       .onSet(this.setTargetTemperature.bind(this))
       .setProps({
         minValue: this.minTemp,
         maxValue: this.maxTemp,
-        minStep: this.minStep
+        minStep: this.minStep,
       });
 
     this.service
@@ -92,50 +101,78 @@ export class ExamplePlatformAccessory {
     const { Characteristic } = this.platform;
 
     try {
-      const res = await axios.get(`${this.host}/open-api/v1/rest/devices/${this.temperatureDevice}`, {
-        headers: {
-          "Authorization" : `Bearer ${this.token}` 
-        }
-      }).then((res) => res.data);
+      const res = await axios
+        .get(
+          `${this.host}/open-api/v1/rest/devices/${this.temperatureDevice}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        )
+        .then((res) => res.data);
 
       const temperature = res.data.state.temperature.temperature;
 
-      this.platform.log.debug('TargetTemperature:', this.state.targetTemperature);
-      this.platform.log.debug('TargetHeatingCoolingState:', this.state.mode);
+      this.platform.log.debug(
+        "TargetTemperature:",
+        this.state.targetTemperature
+      );
+      this.platform.log.debug("TargetHeatingCoolingState:", this.state.mode);
 
       this.service
         .getCharacteristic(Characteristic.CurrentTemperature)
         .updateValue(temperature);
 
       if (this.state.mode === 1) {
-        if (temperature <= (this.state.targetTemperature - this.minStep)) {
+        if (temperature <= this.state.targetTemperature - this.minStep) {
           this.service
             .getCharacteristic(Characteristic.CurrentHeatingCoolingState)
             .updateValue(Characteristic.CurrentHeatingCoolingState.HEAT);
 
-          await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
-            state: {
-              power: {
-                powerState: 'on'
-              }
-            }
-          }, { headers: { "Authorization" : `Bearer ${this.token}` } });
-        }else if (temperature >= (this.state.targetTemperature + this.minStep)) {
+          await axios.put(
+            `${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`,
+            {
+              state: {
+                power: {
+                  powerState: "on",
+                },
+              },
+            },
+            { headers: { Authorization: `Bearer ${this.token}` } }
+          );
+        } else if (temperature >= this.state.targetTemperature + this.minStep) {
           this.service
             .getCharacteristic(Characteristic.CurrentHeatingCoolingState)
             .updateValue(Characteristic.CurrentHeatingCoolingState.OFF);
 
-          await axios.put(`${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`, {
+          await axios.put(
+            `${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`,
+            {
+              state: {
+                power: {
+                  powerState: "off",
+                },
+              },
+            },
+            { headers: { Authorization: `Bearer ${this.token}` } }
+          );
+        }
+      } else {
+        await axios.put(
+          `${this.host}/open-api/v1/rest/devices/${this.temperatureSwitch}`,
+          {
             state: {
               power: {
-                powerState: 'off'
-              }
-            }
-          }, { headers: { "Authorization" : `Bearer ${this.token}` } });
-        }
+                powerState: "off",
+              },
+            },
+          },
+          { headers: { Authorization: `Bearer ${this.token}` } }
+        );
       }
-    }catch(e) {
-      this.platform.log.error('Error getting device status:', e);
+    } catch (e) {
+      this.platform.log.error("Error getting device status:", e);
     }
   }
 
@@ -143,7 +180,7 @@ export class ExamplePlatformAccessory {
     this.state.targetTemperature = value as number;
     this._getStatus();
 
-    this.platform.log.debug('Set Characteristic TargetTemperature ->', value);
+    this.platform.log.debug("Set Characteristic TargetTemperature ->", value);
   }
 
   async setTargetHeatingCoolingState(value: CharacteristicValue) {
@@ -151,6 +188,9 @@ export class ExamplePlatformAccessory {
 
     this._getStatus();
 
-    this.platform.log.debug('Set Characteristic TargetHeatingCoolingState ->', value);
+    this.platform.log.debug(
+      "Set Characteristic TargetHeatingCoolingState ->",
+      value
+    );
   }
 }

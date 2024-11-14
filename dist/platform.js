@@ -16,14 +16,15 @@ class ThermostatGroupHomebridgePlatform {
         this.Service = this.api.hap.Service;
         this.Characteristic = this.api.hap.Characteristic;
         // this is used to track restored cached accessories
-        this.accessories = [];
-        this.log.debug('Finished initializing platform:', this.config.name);
+        this.accessories = new Map();
+        this.discoveredCacheUUIDs = [];
+        this.log.debug("Finished initializing platform:", this.config.name);
         // When this event is fired it means Homebridge has restored all cached accessories from disk.
         // Dynamic Platform plugins should only register new accessories after this event was fired,
         // in order to ensure they weren't added to homebridge already. This event can also be used
         // to start discovery of new accessories.
-        this.api.on('didFinishLaunching', () => {
-            log.debug('Executed didFinishLaunching callback');
+        this.api.on("didFinishLaunching", () => {
+            log.debug("Executed didFinishLaunching callback");
             // run the method to discover / register your devices as accessories
             this.discoverDevices();
         });
@@ -33,9 +34,9 @@ class ThermostatGroupHomebridgePlatform {
      * It should be used to setup event handlers for characteristics and update respective values.
      */
     configureAccessory(accessory) {
-        this.log.info('Loading accessory from cache:', accessory.displayName);
+        this.log.info("Loading accessory from cache:", accessory.displayName);
         // add the restored accessory to the accessories cache so we can track if it has already been registered
-        this.accessories.push(accessory);
+        this.accessories.set(accessory.UUID, accessory);
     }
     /**
      * This is an example method showing how to register discovered accessories.
@@ -43,7 +44,7 @@ class ThermostatGroupHomebridgePlatform {
      * must not be registered again to prevent "duplicate UUID" errors.
      */
     discoverDevices() {
-        this.log.debug('Discovering devices...', this.config);
+        this.log.debug("Discovering devices...", this.config);
         // EXAMPLE ONLY
         // A real plugin you would discover accessories from the local network, cloud services
         // or a user-defined array in the platform config.
@@ -55,10 +56,10 @@ class ThermostatGroupHomebridgePlatform {
             const uuid = this.api.hap.uuid.generate(device.sensor + device.switch);
             // see if an accessory with the same uuid has already been registered and restored from
             // the cached devices we stored in the `configureAccessory` method above
-            const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+            const existingAccessory = this.accessories.get(uuid);
             if (existingAccessory) {
                 // the accessory already exists
-                this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
+                this.log.info("Restoring existing accessory from cache:", existingAccessory.displayName);
                 // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
                 existingAccessory.context.device = device;
                 existingAccessory.context.token = this.config.token;
@@ -68,12 +69,12 @@ class ThermostatGroupHomebridgePlatform {
                 new platformAccessory_1.ExamplePlatformAccessory(this, existingAccessory);
                 // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
                 // remove platform accessories when no longer present
-                this.api.unregisterPlatformAccessories(settings_1.PLUGIN_NAME, settings_1.PLATFORM_NAME, [existingAccessory]);
-                this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
+                // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
+                // this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
             }
             else {
                 // the accessory does not yet exist, so we need to create it
-                this.log.info('Adding new accessory:', device.name);
+                this.log.info("Adding new accessory:", device.name);
                 // create a new accessory
                 const accessory = new this.api.platformAccessory(device.name, uuid);
                 // store a copy of the device object in the `accessory.context`
@@ -84,7 +85,9 @@ class ThermostatGroupHomebridgePlatform {
                 // this is imported from `platformAccessory.ts`
                 new platformAccessory_1.ExamplePlatformAccessory(this, accessory);
                 // link the accessory to your platform
-                this.api.registerPlatformAccessories(settings_1.PLUGIN_NAME, settings_1.PLATFORM_NAME, [accessory]);
+                this.api.registerPlatformAccessories(settings_1.PLUGIN_NAME, settings_1.PLATFORM_NAME, [
+                    accessory,
+                ]);
             }
         }
     }

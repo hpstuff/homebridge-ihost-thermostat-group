@@ -1,4 +1,4 @@
-import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
+import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from "homebridge";
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
@@ -10,7 +10,8 @@ export declare class ThermostatGroupHomebridgePlatform implements DynamicPlatfor
     readonly api: API;
     readonly Service: typeof Service;
     readonly Characteristic: typeof Characteristic;
-    readonly accessories: PlatformAccessory[];
+    readonly accessories: Map<string, PlatformAccessory>;
+    readonly discoveredCacheUUIDs: string[];
     constructor(log: Logger, config: PlatformConfig, api: API);
     /**
      * This function is invoked when homebridge restores cached accessories from disk at startup.
